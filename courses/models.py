@@ -1,5 +1,6 @@
 from django.db import models
 
+from config import settings
 from users.models import NULLABLE, User
 
 
@@ -7,6 +8,9 @@ class Course(models.Model):
     name = models.CharField(max_length=150, verbose_name='Название')
     preview = models.ImageField(upload_to='', verbose_name='Изображение', **NULLABLE)
     description = models.TextField(verbose_name='Описание', **NULLABLE)
+
+    students = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name="студенты", related_name='courses',
+                                      **NULLABLE)
 
     def __str__(self):
         return self.name
@@ -23,6 +27,8 @@ class Lesson(models.Model):
     video = models.URLField(**NULLABLE)
 
     course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='курс')
+    students = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name="студенты", related_name='lessons',
+                                      **NULLABLE)
 
     def __str__(self):
         return self.name
