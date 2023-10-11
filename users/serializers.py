@@ -17,8 +17,19 @@ class UserDetailSerializer(ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'avatar', 'telephone', 'city', 'payments']
+        fields = ['email', "password", "first_name", "last_name", 'avatar', 'telephone', 'city', 'payments']
 
     def get_payments(self, instance):
         return [{"date": item.date, "amount": item.amount, "method": item.method}
                 for item in Payment.objects.filter(user_id=instance.pk)]
+
+
+class OtherUserDetailSerializer(ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['email', "first_name", 'avatar', 'telephone', 'city']
+
+
+"""При этом при просмотре чужого профиля должна быть доступна только общая информация, 
+в которую не входят: пароль, фамилия, история платежей."""
