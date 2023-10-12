@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.viewsets import ModelViewSet
 
 from courses.models import Course, Lesson, Payment
+from courses.paginators import CoursesPaginator
 from courses.permissions import IsModerator, IsStudent
 from courses.serializers import CourseSerializer, LessonSerializer, CourseDetailSerializer, PaymentSerializer
 
@@ -15,6 +16,7 @@ class CourseViewSet(ModelViewSet):
     serializers = {
         'retrieve': CourseDetailSerializer
     }
+    pagination_class = CoursesPaginator
 
     def get_serializer_class(self):
         return self.serializers.get(self.action, self.default_serializer)
@@ -58,6 +60,7 @@ class LessonListView(ListAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated]
+    pagination_class = CoursesPaginator
 
 
 class PaymentListView(ListAPIView):
