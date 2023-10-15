@@ -4,10 +4,11 @@ from rest_framework.generics import RetrieveAPIView, UpdateAPIView, CreateAPIVie
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.viewsets import ModelViewSet
 
-from courses.models import Course, Lesson, Payment
+from courses.models import Course, Lesson, Payment, Subscription
 from courses.paginators import CoursesPaginator
 from courses.permissions import IsModerator, IsStudent
-from courses.serializers import CourseSerializer, LessonSerializer, CourseDetailSerializer, PaymentSerializer
+from courses.serializers import CourseSerializer, LessonSerializer, CourseDetailSerializer, PaymentSerializer, \
+    SubscriptionSerializer
 
 
 class CourseViewSet(ModelViewSet):
@@ -77,3 +78,19 @@ class PaymentListView(ListAPIView):
         queryset = queryset.filter(user=self.request.user)
 
         return queryset
+
+
+class SubscriptionCreateAPIView(CreateAPIView,):
+    serializer_class = SubscriptionSerializer
+    queryset = Subscription.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        request.data['user'] = request.user.pk
+        return super().create(request, *args, **kwargs)
+
+
+class SubscriptionDestroyAPIView(DestroyAPIView):
+    serializer_class = SubscriptionSerializer
+    queryset = Subscription.objects.all()
+    permission_classes = [IsAuthenticated]
