@@ -29,7 +29,3 @@ class OtherUserDetailSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = ['email', "first_name", 'avatar', 'telephone', 'city']
-
-
-"""При этом при просмотре чужого профиля должна быть доступна только общая информация, 
-в которую не входят: пароль, фамилия, история платежей."""
