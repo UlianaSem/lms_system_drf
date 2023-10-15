@@ -85,9 +85,10 @@ class SubscriptionCreateAPIView(CreateAPIView,):
     queryset = Subscription.objects.all()
     permission_classes = [IsAuthenticated]
 
-    def create(self, request, *args, **kwargs):
-        request.data['user'] = request.user.pk
-        return super().create(request, *args, **kwargs)
+    def perform_create(self, serializer):
+        subscription = serializer.save()
+        subscription.user = self.request.user
+        subscription.save()
 
 
 class SubscriptionDestroyAPIView(DestroyAPIView):
