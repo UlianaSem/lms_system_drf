@@ -27,7 +27,7 @@ load_dotenv(BASE_DIR / '.env')
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG')
+DEBUG = os.getenv('DEBUG') == "True"
 
 ALLOWED_HOSTS = []
 
@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'rest_framework_simplejwt',
+    'drf_yasg',
+    'django_crontab',
 
     'users',
     'courses',
@@ -158,3 +160,9 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
+
+STRIPE = os.getenv("STRIPE")
+
+CRONJOBS = [
+    ('*/1 * * * *', 'courses.services.check_payment')
+]

@@ -8,6 +8,7 @@ class Course(models.Model):
     name = models.CharField(max_length=150, verbose_name='Название')
     preview = models.ImageField(upload_to='', verbose_name='Изображение', **NULLABLE)
     description = models.TextField(verbose_name='Описание', **NULLABLE)
+    price = models.PositiveIntegerField(verbose_name="цена", default=10000)
 
     students = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name="студенты", related_name='courses',
                                       **NULLABLE)
@@ -25,6 +26,7 @@ class Lesson(models.Model):
     preview = models.ImageField(upload_to='', verbose_name='Изображение', **NULLABLE)
     description = models.TextField(verbose_name='Описание', **NULLABLE)
     video = models.URLField(**NULLABLE)
+    price = models.PositiveIntegerField(verbose_name="цена", default=1000)
 
     course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='курс')
     students = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name="студенты", related_name='lessons',
@@ -52,8 +54,11 @@ class Payment(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, verbose_name="урок", **NULLABLE)
 
     date = models.DateField(verbose_name="дата оплаты", auto_now_add=True)
-    amount = models.PositiveIntegerField(verbose_name="сумма оплаты")
+    amount = models.PositiveIntegerField(verbose_name="сумма оплаты", **NULLABLE)
     method = models.CharField(max_length=10, choices=METHOD_CHOICES, verbose_name="способ оплаты")
+
+    stripe_id = models.CharField(max_length=100, unique=True, **NULLABLE)
+    status = models.CharField(max_length=150, verbose_name="статус", **NULLABLE)
 
     def __str__(self):
         if self.course:

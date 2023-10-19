@@ -8,7 +8,7 @@ from courses.models import Course, Lesson, Payment, Subscription
 from courses.paginators import CoursesPaginator
 from courses.permissions import IsModerator, IsStudent
 from courses.serializers import CourseSerializer, LessonSerializer, CourseDetailSerializer, PaymentSerializer, \
-    SubscriptionSerializer
+    SubscriptionSerializer, PaymentListSerializer, PaymentCreateSerializer
 
 
 class CourseViewSet(ModelViewSet):
@@ -18,6 +18,10 @@ class CourseViewSet(ModelViewSet):
         'retrieve': CourseDetailSerializer
     }
     pagination_class = CoursesPaginator
+
+    # @swagger_auto_schema(manual_parameters=[k])
+    # def create(self, request, *args, **kwargs):
+    #     return super().create(request, *args, **kwargs)
 
     def get_serializer_class(self):
         return self.serializers.get(self.action, self.default_serializer)
@@ -65,13 +69,13 @@ class LessonListView(ListAPIView):
 
 
 class PaymentListView(ListAPIView):
-    serializer_class = PaymentSerializer
+    serializer_class = PaymentListSerializer
     queryset = Payment.objects.all()
     permission_classes = [IsAuthenticated]
 
     filter_backends = (DjangoFilterBackend, OrderingFilter)
-    filterset_fields = ('course', 'lesson', 'method', )
-    ordering_fields = ('date', )
+    filterset_fields = ('course', 'lesson', 'method',)
+    ordering_fields = ('date',)
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -80,7 +84,30 @@ class PaymentListView(ListAPIView):
         return queryset
 
 
-class SubscriptionCreateAPIView(CreateAPIView,):
+class PaymentCreateView(CreateAPIView):
+    serializer_class = PaymentCreateSerializer
+    queryset = Payment.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        pay = serializer.save()
+
+        if pay.course is not None:
+            pay.amount = Course.objects.get(pk=pay.course.pk).price
+
+        if pay.lesson is not None:
+            pay.amount = Lesson.objects.get(pk=pay.lesson.pk).price
+
+        pay.save()
+
+
+class PaymentDetailView(RetrieveAPIView):
+    serializer_class = PaymentSerializer
+    queryset = Payment.objects.all()
+    permission_classes = [IsAuthenticated]
+
+
+class SubscriptionCreateAPIView(CreateAPIView):
     serializer_class = SubscriptionSerializer
     queryset = Subscription.objects.all()
     permission_classes = [IsAuthenticated]
