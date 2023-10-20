@@ -38,16 +38,16 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             title="TokenObtainPair",
             type=openapi.TYPE_OBJECT,
             properties={
-                'email': openapi.Schema(type=openapi.TYPE_STRING, title="email"),
-                'password': openapi.Schema(type=openapi.TYPE_STRING, title="password"),
+                'email': openapi.Schema(type=openapi.TYPE_STRING, title="email", minLength=1),
+                'password': openapi.Schema(type=openapi.TYPE_STRING, title="password", minLength=1),
             }
         ),
         responses={200: openapi.Schema(
             title="TokenObtainPair",
             type=openapi.TYPE_OBJECT,
             properties={
-                'refresh': openapi.Schema(type=openapi.TYPE_STRING, title="refresh"),
-                'access': openapi.Schema(type=openapi.TYPE_STRING, title="access"),
+                'refresh': openapi.Schema(type=openapi.TYPE_STRING, title="refresh", minLength=1),
+                'access': openapi.Schema(type=openapi.TYPE_STRING, title="access", minLength=1),
             }
         )
         },
