@@ -1,4 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.filters import OrderingFilter
 from rest_framework.generics import RetrieveAPIView, UpdateAPIView, CreateAPIView, DestroyAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -7,6 +8,7 @@ from rest_framework.viewsets import ModelViewSet
 from courses.models import Course, Lesson, Payment, Subscription
 from courses.paginators import CoursesPaginator
 from courses.permissions import IsModerator, IsStudent
+from courses.schemas import request_body, responses
 from courses.serializers import CourseSerializer, LessonSerializer, CourseDetailSerializer, PaymentSerializer, \
     SubscriptionSerializer, PaymentListSerializer, PaymentCreateSerializer
 
@@ -19,9 +21,26 @@ class CourseViewSet(ModelViewSet):
     }
     pagination_class = CoursesPaginator
 
-    # @swagger_auto_schema(manual_parameters=[k])
-    # def create(self, request, *args, **kwargs):
-    #     return super().create(request, *args, **kwargs)
+    @swagger_auto_schema(
+        request_body=request_body,
+        responses=responses,
+    )
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        request_body=request_body,
+        responses=responses,
+    )
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        request_body=request_body,
+        responses=responses,
+    )
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
 
     def get_serializer_class(self):
         return self.serializers.get(self.action, self.default_serializer)
