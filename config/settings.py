@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'drf_yasg',
     'django_crontab',
+    "django_celery_beat",
 
     'users',
     'courses',
@@ -166,3 +167,15 @@ STRIPE = os.getenv("STRIPE")
 CRONJOBS = [
     ('*/1 * * * *', 'courses.services.check_payment')
 ]
+
+CELERY_BROKER_URL = 'redis://localhost:6379'
+
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT'))
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL') == "True"
+
+DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER')
