@@ -11,6 +11,7 @@ from courses.permissions import IsModerator, IsStudent
 from courses.schemas import request_body, responses
 from courses.serializers import CourseSerializer, LessonSerializer, CourseDetailSerializer, PaymentSerializer, \
     SubscriptionSerializer, PaymentListSerializer, PaymentCreateSerializer
+from courses.tasks import send_update_notification
 
 
 class CourseViewSet(ModelViewSet):
@@ -42,6 +43,10 @@ class CourseViewSet(ModelViewSet):
     def update(self, request, *args, **kwargs):
         return super().update(request, *args, **kwargs)
 
+    def perform_update(self, serializer):
+        updated_course = serializer.save()
+        send_update_notification.delay(updated_course.pk, "course")
+
     def get_serializer_class(self):
         return self.serializers.get(self.action, self.default_serializer)
 
@@ -61,11 +66,19 @@ class LessonCreateView(CreateAPIView):
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated, IsAdminUser]
 
+    def perform_create(self, serializer):
+        created_lesson = serializer.save()
+        send_update_notification.delay(created_lesson.course_id, "lesson")
+
 
 class LessonUpdateView(UpdateAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated, IsModerator | IsStudent]
+
+    def perform_update(self, serializer):
+        updated_lesson = serializer.save()
+        send_update_notification.delay(updated_lesson.course_id, "lesson")
 
 
 class LessonDeleteView(DestroyAPIView):
