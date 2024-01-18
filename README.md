@@ -37,8 +37,7 @@
 2. Cклонируйте репозиторий себе на компьютер
 3. Создайте файл .env и заполните его, используя образец из файла .env.example
 4. Соберите образ с помощью команды `docker-compose build`
-5. Создайте БД командой `docker-compose exec db psql -U <postgres_user>`, а затем командой `CREATE DATABASE <database_name>;`
-6. Запустите контейнеры с помощью команды `docker-compose up`
+5. Запустите контейнеры с помощью команды `docker-compose up`
 
 ## Файл .env.example
 
